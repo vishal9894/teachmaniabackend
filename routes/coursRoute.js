@@ -11,13 +11,14 @@ const {
 const authMiddleware = require("../middleware/authmiddleware");
 const checkCourseAccess = require("../middleware/checkCourseAccess");
 const upload = require("../middleware/multer");
+const verifyRole = require("../middleware/veryfiyRole");
 
 const router = express.Router();
 
 // ✅ ADD COURSE (FILES + DATA)
 router.post(
   "/add-course",
-  authMiddleware,
+  authMiddleware, verifyRole("admin"),
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
     { name: "video", maxCount: 1 },
@@ -27,7 +28,7 @@ router.post(
 );
 
 // ✅ OTHER ROUTES
-router.get("/get-course", authMiddleware, getAllCourses);
+router.get("/get-course", authMiddleware , , getAllCourses);
 router.get("/get-course/:id", authMiddleware, getCourseById);
 router.delete("/course-delete/:id", authMiddleware, deleteCourse);
 router.post("/purchase", authMiddleware, handlePurchaseCourse);
