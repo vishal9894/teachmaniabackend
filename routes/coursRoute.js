@@ -1,0 +1,42 @@
+const express = require("express");
+const {
+  createCourse,
+  getAllCourses,
+  getCourseById,
+  deleteCourse,
+  handlePurchaseCourse,
+  getCourseContent,
+} = require("../controller/courseController");
+
+const authMiddleware = require("../middleware/authmiddleware");
+const checkCourseAccess = require("../middleware/checkCourseAccess");
+const upload = require("../middleware/multer");
+
+const router = express.Router();
+
+// ✅ ADD COURSE (FILES + DATA)
+router.post(
+  "/add-course",
+  authMiddleware,
+  upload.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "video", maxCount: 1 },
+    { name: "resources", maxCount: 10 },
+  ]),
+  createCourse,
+);
+
+// ✅ OTHER ROUTES
+router.get("/get-course", authMiddleware, getAllCourses);
+router.get("/get-course/:id", authMiddleware, getCourseById);
+router.delete("/course-delete/:id", authMiddleware, deleteCourse);
+router.post("/purchase", authMiddleware, handlePurchaseCourse);
+
+router.get(
+  "/content/:courseId",
+  authMiddleware,
+  checkCourseAccess,
+  getCourseContent,
+);
+
+module.exports = router;
