@@ -28,7 +28,7 @@ router.post(
 );
 
 // ✅ OTHER ROUTES
-router.get("/get-course", authMiddleware , , getAllCourses);
+router.get("/get-course", authMiddleware ,  getAllCourses);
 router.get("/get-course/:id", authMiddleware, getCourseById);
 router.delete("/course-delete/:id", authMiddleware, deleteCourse);
 router.post("/purchase", authMiddleware, handlePurchaseCourse);
