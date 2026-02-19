@@ -78,9 +78,7 @@ const HanldeAllUser = async (req, res) => {
 const HandleGetUser = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
-
-   
-    
+    console.log(user);
 
     res.status(200).json({ message: "fetch user Sucessfylly", user });
   } catch (error) {}

@@ -89,15 +89,24 @@ const deleteCourse = async (req, res) => {
 
 const handlePurchaseCourse = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const { courseId } = req.body;
+
+    
+    
 
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
 
+    console.log(course);
+    
+
     const user = await User.findById(userId);
+
+    console.log(user);
+    
 
     if (user.courses.includes(courseId)) {
       return res.status(400).json({ message: "Course already purchased" });
