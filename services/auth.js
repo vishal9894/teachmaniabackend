@@ -5,21 +5,20 @@ require("dotenv").config();
 const GenerateToken = (user) => {
   return jwt.sign(
     {
-      id: user._id,       
+      id: user._id,
       email: user.email,
       role: user.role,
     },
     process.env.SECRET_KEY,
-    { expiresIn: "7h" }
+    { expiresIn: "7h" },
   );
 };
-
 
 const verifyToken = (token) => {
   try {
     return jwt.verify(token, process.env.SECRET_KEY);
   } catch (err) {
-    throw new Error("Invalid or expired token");
+    console.log(err);
   }
 };
 
