@@ -1,7 +1,7 @@
 // const Course = require("../model/courseModel");
 
 const Course = require("../models/courseModel");
-const User = require("../models/userModel")
+const User = require("../models/userModel");
 
 const createCourse = async (req, res) => {
   try {
@@ -29,7 +29,6 @@ const createCourse = async (req, res) => {
       message: "Course uploaded successfully",
       data: course,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -37,9 +36,6 @@ const createCourse = async (req, res) => {
     });
   }
 };
-
-
-
 
 const getAllCourses = async (req, res) => {
   try {
@@ -52,6 +48,49 @@ const getAllCourses = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch courses",
+    });
+  }
+};
+
+const HandlePdfUpload = async (req, res) => {
+  try {
+    const  courseId  = req.params;
+
+    console.log(req.files); // debug
+
+    if (!req.files || !req.files.resources) {
+      return res.status(400).json({
+        message: "No files received",
+      });
+    }
+
+    const resourceUrls = req.files.resources.map(
+      (file) => file.location
+    );
+
+    console.log(resourceUrls);
+
+    const course = await Course.findById(courseId);
+
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found",
+      });
+    }
+
+    course.resources.push(...resourceUrls);
+
+    await course.save();
+
+    res.status(200).json({
+      message: "Upload successful",
+      resources: resourceUrls,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Server error",
     });
   }
 };
@@ -89,21 +128,16 @@ const handlePurchaseCourse = async (req, res) => {
     const userId = req.user.id;
     const { courseId } = req.body;
 
-    
-    
-
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
 
     console.log(course);
-    
 
     const user = await User.findById(userId);
 
     console.log(user);
-    
 
     if (user.courses.includes(courseId)) {
       return res.status(400).json({ message: "Course already purchased" });
@@ -135,4 +169,12 @@ const getCourseContent = async (req, res) => {
   }
 };
 
-module.exports = { createCourse, getAllCourses, deleteCourse, getCourseById , handlePurchaseCourse ,getCourseContent };
+module.exports = {
+  createCourse,
+  getAllCourses,
+  deleteCourse,
+  getCourseById,
+  handlePurchaseCourse,
+  getCourseContent,
+  HandlePdfUpload,
+};

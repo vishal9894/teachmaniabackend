@@ -6,6 +6,7 @@ const {
   deleteCourse,
   handlePurchaseCourse,
   getCourseContent,
+  HandlePdfUpload,
 } = require("../controller/courseController");
 
 const authMiddleware = require("../middleware/authmiddleware");
@@ -22,16 +23,20 @@ router.post(
     { name: "thumbnail", maxCount: 1 },
     { name: "video", maxCount: 1 },
     { name: "resources", maxCount: 10 },
-  ]),createCourse,);
+  ]),
+  createCourse,
+);
 router.get("/get-course", authMiddleware, getAllCourses);
 router.get("/get-course/:id", authMiddleware, getCourseById);
 router.delete("/course-delete/:id", authMiddleware, deleteCourse);
 router.post("/purchase", authMiddleware, handlePurchaseCourse);
-
-router.get(
-  "/content/:courseId",
+router.post(
+  "/upload-pdf/:id",
+  upload.fields([{ name: "resources", maxCount: 10 }]),
   authMiddleware,
-  getCourseContent,
+  HandlePdfUpload,
 );
+
+router.get("/content/:courseId", authMiddleware, getCourseContent);
 
 module.exports = router;

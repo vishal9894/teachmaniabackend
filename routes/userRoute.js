@@ -15,8 +15,8 @@ const route = express.Router();
 route.post("/signup", HandleSignup);
 route.post("/login", HandleLogin);
 route.post("/logout", HandleLogout);
-route.get("/profile", authMiddleware, HandleGetUser);
-route.get("/alluser", authMiddleware, HanldeAllUser);
+route.get("/profile",  authMiddleware, HandleGetUser);
+route.get("/alluser", verifyRole("admin"), authMiddleware, HanldeAllUser);
 route.put("/update-porfile/:id", authMiddleware, HandleUpdateProtfolio);
 
 module.exports = route;
