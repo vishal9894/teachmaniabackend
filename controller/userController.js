@@ -80,10 +80,33 @@ const HandleUpdateProtfolio = async (req, res) => {
 
 const HanldeAllUser = async (req, res) => {
   try {
-    const user = await User.find().select("-password");
-    const count = user.length;
-    res.status(200).json({ message: " get all user", user, count });
-  } catch (error) {}
+    const { page = 1, limit = 2 } = req.query;
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+
+    const skip = (pageNum - 1) * limitNum;
+
+    // get users with pagination
+    const users = await User.find({})
+      .select("-password")
+      .skip(skip)
+      .limit(limitNum);
+
+    // get total user count
+    const totalUsers = await User.countDocuments();
+
+    res.status(200).json({
+      message: "Get all users",
+      users,
+      totalUsers,
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalUsers / limitNum),
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 const HandleGetUser = async (req, res) => {
