@@ -7,17 +7,12 @@ const createCourse = async (req, res) => {
   try {
     const { title, description, price, validity } = req.body;
 
-    const thumbnailUrl = req.files?.thumbnail?.[0]?.path;
-    const videoUrl = req.files?.video?.[0]?.path;
-    const resourceUrls =
-      req.files?.resources?.map((f) => f.path) || [];
+    // ✅ FIX: use .location instead of .path
+    const thumbnailUrl = req.files?.thumbnail?.[0]?.location || null;
+    const videoUrl = req.files?.video?.[0]?.location || null;
 
-    // if (!thumbnailUrl || !videoUrl) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Thumbnail and video are required",
-    //   });
-    // }
+    const resourceUrls =
+      req.files?.resources?.map((file) => file.location) || [];
 
     const course = await Course.create({
       title,
@@ -34,6 +29,7 @@ const createCourse = async (req, res) => {
       message: "Course uploaded successfully",
       data: course,
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -41,6 +37,7 @@ const createCourse = async (req, res) => {
     });
   }
 };
+
 
 
 

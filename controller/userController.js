@@ -19,6 +19,12 @@ const HandleSignup = async (req, res) => {
 
     const user = User({ name, email, password: hashpassword });
     const token = GenerateToken(user);
+    res.cookie("token", token, {
+      httpOnly: true, // prevents XSS attack
+      secure: false, // true in production (HTTPS)
+      sameSite: "Strict", // CSRF protection
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
     await user.save();
 
@@ -27,7 +33,7 @@ const HandleSignup = async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
-        role : user.role
+        role: user.role,
       },
       token,
     });
@@ -45,12 +51,19 @@ const HandleLogin = async (req, res) => {
       res.status(400).json({ message: "user not Found" });
     }
     const token = GenerateToken(user);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json({
       message: "user login sucessfully",
       user: {
         id: user._id,
         email: user.email,
-        role : user.role
+        role: user.role,
       },
       token,
     });
@@ -59,26 +72,23 @@ const HandleLogin = async (req, res) => {
   }
 };
 
-const HandleUpdateProtfolio = async (req , res) =>{
-    try {
-        res.send("cooming soon");
-    } catch (error) {
-        
-    }
-}
+const HandleUpdateProtfolio = async (req, res) => {
+  try {
+    res.send("cooming soon");
+  } catch (error) {}
+};
 
 const HanldeAllUser = async (req, res) => {
   try {
     const user = await User.find().select("-password");
     const count = user.length;
-    res.status(200).json({message  :" get all user" , user , count})
+    res.status(200).json({ message: " get all user", user, count });
   } catch (error) {}
 };
 
 const HandleGetUser = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
-    console.log(user);
 
     res.status(200).json({ message: "fetch user Sucessfylly", user });
   } catch (error) {}
@@ -95,5 +105,12 @@ const HandleLogout = async (req, res) => {
       message: "Logout failed",
     });
   }
-}
-module.exports = { HandleLogin, HandleSignup, HandleGetUser ,HanldeAllUser ,HandleUpdateProtfolio ,HandleLogout };
+};
+module.exports = {
+  HandleLogin,
+  HandleSignup,
+  HandleGetUser,
+  HanldeAllUser,
+  HandleUpdateProtfolio,
+  HandleLogout,
+};
