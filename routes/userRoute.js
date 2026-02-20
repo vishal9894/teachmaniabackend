@@ -16,7 +16,7 @@ route.post("/signup", HandleSignup);
 route.post("/login", HandleLogin);
 route.post("/logout", HandleLogout);
 route.get("/profile",  authMiddleware, HandleGetUser);
-route.get("/alluser", verifyRole("admin"), authMiddleware, HanldeAllUser);
+route.get("/alluser", authMiddleware, verifyRole("admin") , HanldeAllUser);
 route.put("/update-porfile/:id", authMiddleware, HandleUpdateProtfolio);
 
 module.exports = route;
