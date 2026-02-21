@@ -52,49 +52,27 @@ const getAllCourses = async (req, res) => {
   }
 };
 
+
 const HandlePdfUpload = async (req, res) => {
   try {
-    const  courseId  = req.params;
+    const couseId = req.params.id;
 
-    console.log(req.files); // debug
-
-    if (!req.files || !req.files.resources) {
-      return res.status(400).json({
-        message: "No files received",
-      });
-    }
-
-    const resourceUrls = req.files.resources.map(
-      (file) => file.location
-    );
-
-    console.log(resourceUrls);
-
-    const course = await Course.findById(courseId);
+    const course = await Course.findById(couseId);
 
     if (!course) {
-      return res.status(404).json({
-        message: "Course not found",
-      });
+      return res.status(400).json({ message: "couse not found" });
     }
+    const data = req.files.resources.map((file) => file.location);
 
-    course.resources.push(...resourceUrls);
+    course.resources.push(...data);
 
     await course.save();
 
-    res.status(200).json({
-      message: "Upload successful",
-      resources: resourceUrls,
-    });
-
+    res.status(200).json({ message: " upload sucessfully", data });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      message: "Server error",
-    });
   }
 };
-
 const getCourseById = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
